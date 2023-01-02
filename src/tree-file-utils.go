@@ -55,7 +55,7 @@ func read_page_from_file(filename string, offset int) tree_page {
 	}
 	var page tree_page
 	buffer1 := bytes.NewBuffer(buffer[0:HEADER_SIZE])
-	buffer2 := bytes.NewBuffer(buffer[HEADER_SIZE : HEADER_SIZE+4])
+	buffer2 := bytes.NewBuffer(buffer[HEADER_SIZE : HEADER_SIZE+INT_SIZE])
 	err = binary.Read(buffer1, binary.LittleEndian, &page.header)
 	if err != nil {
 		log.Fatalln("Cannot read header. Aborting...")
@@ -66,7 +66,7 @@ func read_page_from_file(filename string, offset int) tree_page {
 	}
 	i := 0
 	for int32(i) < page.header.records_number {
-		buffer_record := bytes.NewBuffer(buffer[HEADER_SIZE+4+i*SINGLE_TREE_RECORD_SIZE : HEADER_SIZE+4+(i+1)*SINGLE_TREE_RECORD_SIZE])
+		buffer_record := bytes.NewBuffer(buffer[HEADER_SIZE+INT_SIZE+i*SINGLE_TREE_RECORD_SIZE : HEADER_SIZE+INT_SIZE+(i+1)*SINGLE_TREE_RECORD_SIZE])
 		var temp_tree_record tree_record
 		err = binary.Read(buffer_record, binary.LittleEndian, &temp_tree_record)
 		if err != nil {
