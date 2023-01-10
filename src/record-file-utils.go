@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
+	"time"
 )
 
 func write_record_to_file(record_to_store record, offset int32) {
@@ -63,13 +65,11 @@ func read_record_from_file(offset int32) record {
 }
 
 func create_new_record(key, address int32) {
+	rand.Seed(time.Now().UTC().UnixNano())
 	var new_record record
-	fmt.Println("Pass value for mass")
-	fmt.Scanf("%d", &new_record.mass)
-	fmt.Println("Pass value for heat")
-	fmt.Scanf("%d", &new_record.heat)
-	fmt.Println("Pass value for delta temperature")
-	fmt.Scanf("%d", &new_record.temp_delta)
+	new_record.mass = (rand.Int31() % 999) + 1
+	new_record.heat = (rand.Int31() % 999) + 1
+	new_record.temp_delta = (rand.Int31() % 999) + 1
 	new_record.key = key
 	write_record_to_file(new_record, address)
 }

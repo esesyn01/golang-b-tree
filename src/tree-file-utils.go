@@ -77,7 +77,6 @@ func write_page_to_file(page tree_page) {
 		}
 	}
 	file.Close()
-	fmt.Println("Page saved")
 }
 
 func read_page_from_file(offset int32) tree_page {
