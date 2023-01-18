@@ -1,7 +1,7 @@
 package main
 
 const (
-	TREE_DEGREE             = 2
+	TREE_DEGREE             = 20
 	HEADER_SIZE             = 12
 	SINGLE_RECORD_SIZE      = 16
 	SINGLE_TREE_RECORD_SIZE = 12
@@ -50,3 +50,4 @@ var root_address int32
 var tree_height int
 var free_list_records []int32
 var free_list_pages []int32
+var subtree_height int
