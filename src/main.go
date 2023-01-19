@@ -11,6 +11,7 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	create_bin_file(COMMANDS_FILE)
 	commands := get_file(COMMANDS_FILE)
 	scanner2 := bufio.NewScanner(commands)
 	exit := 0
@@ -54,7 +55,8 @@ func main() {
 					fmt.Printf("Record with key %d inserted in %d file operations\n", key, operations)
 				}
 			}
-
+			operations = 0
+			total_operations -= 1
 		case 'S':
 			key, _ := strconv.Atoi(args[1])
 			if root_address != NO_ROOT {
@@ -317,5 +319,9 @@ func main() {
 	records, nodes := calc_used_space(root)
 	percentage := (float64(records) / float64(nodes*MAX_KEYS)) * 100
 	fmt.Printf("Overall, the tree has %.2f%% memory usage\n", percentage)
+	avg_disk_operations := (float64(total_disk_accesses) / float64(total_operations))
+	fmt.Printf("Overall, there were %.2f disk accesses on average operation\n", avg_disk_operations)
+	fmt.Printf("There are %d records in tree at the end\n", records)
 	commands.Close()
+	remove_file(COMMANDS_FILE)
 }

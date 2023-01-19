@@ -1,7 +1,7 @@
 package main
 
 const (
-	TREE_DEGREE             = 20
+	TREE_DEGREE             = 2
 	HEADER_SIZE             = 12
 	SINGLE_RECORD_SIZE      = 16
 	SINGLE_TREE_RECORD_SIZE = 12

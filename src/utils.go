@@ -157,18 +157,57 @@ func insert_key_into_node(node *tree_page, new_tree_record tree_record, offset i
 	log.Fatalln("Cannot insert record into leaf. Aborting...")
 }
 
+func contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func remove(s []int, i int) []int {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
 func generate_test_data() {
 	file := get_file(COMMANDS_FILE)
 	i := 0
-	for i < 200 {
-		rand.Seed(time.Now().UTC().UnixNano())
-		key := (rand.Int31() % 299) + 1
+	keys := []int{-1}
+	for i < 20000 {
+		key := -1
+		for contains(keys, key) {
+			rand.Seed(time.Now().UTC().UnixNano())
+			key = int(rand.Int31()%2000000) + 1
+		}
+		keys = append(keys, key)
 		fmt.Fprintf(file, "I %d\n", key)
 		i += 1
 	}
-	for i < 12000 {
+	keys = keys[1:]
+	for i < 100000 {
 		rand.Seed(time.Now().UTC().UnixNano())
-		key := (rand.Int31() % 999) + 1
+		opt := rand.Int31() % 2
+		if opt == 0 {
+			key := keys[0]
+			for contains(keys, key) {
+				rand.Seed(time.Now().UTC().UnixNano())
+				key = int(rand.Int31()%2000000) + 1
+			}
+			keys = append(keys, key)
+			fmt.Fprintf(file, "I %d\n", key)
+		} else {
+			idx := int(rand.Int31() % int32(len(keys)))
+			key := keys[idx]
+			keys = remove(keys, idx)
+			fmt.Fprintf(file, "D %d\n", key)
+		}
+		i += 1
+	}
+	/*for i < 150000 {
+		rand.Seed(time.Now().UTC().UnixNano())
+		key := (rand.Int31() % 99999) + 1
 		opt := rand.Int31() % 2
 		if opt == 0 {
 			fmt.Fprintf(file, "D %d\n", key)
@@ -176,7 +215,8 @@ func generate_test_data() {
 			fmt.Fprintf(file, "I %d\n", key)
 		}
 		i += 1
-	}
+	}*/
+	fmt.Fprintf(file, "E\n")
 	file.Close()
 }
 
