@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
+	"time"
 )
 
 func write_record_to_file(record_to_store record, offset int32) {
@@ -63,22 +65,53 @@ func read_record_from_file(offset int32) record {
 }
 
 func create_new_record(key, address int32) {
+	rand.Seed(time.Now().UTC().UnixNano())
 	var new_record record
-	fmt.Println("Pass value for mass")
-	fmt.Scanf("%d", &new_record.mass)
-	fmt.Println("Pass value for heat")
-	fmt.Scanf("%d", &new_record.heat)
-	fmt.Println("Pass value for delta temperature")
-	fmt.Scanf("%d", &new_record.temp_delta)
+	new_record.mass = (rand.Int31() % 999) + 1
+	new_record.heat = (rand.Int31() % 999) + 1
+	new_record.temp_delta = (rand.Int31() % 999) + 1
 	new_record.key = key
 	write_record_to_file(new_record, address)
 }
+func delete_record_from_file(node tree_page, key int32) {
+	i := 0
+	for int32(i) < node.header.records_number {
+		if key == node.records[i].key {
+			del_record := read_record_from_file(node.records[i].record_offset)
+			del_record.key = DELETED
+			del_record.temp_delta = DELETED
+			del_record.mass = DELETED
+			del_record.heat = DELETED
+			free_list_records = append(free_list_records, node.records[i].record_offset)
+			write_record_to_file(del_record, node.records[i].record_offset)
+			return
+		}
+		i += 1
+	}
+}
 
 func get_offset_for_new_record() int32 {
-	file := get_file(RECORDS_FILE_NAME)
-	fileinfo, _ := file.Stat()
-	size := fileinfo.Size()
-	file.Close()
-	return int32(size)
+	if len(free_list_records) > 0 {
+		addr := free_list_records[len(free_list_records)-1]
+		free_list_records = free_list_records[:len(free_list_records)-1]
+		return addr
+	} else {
+		file := get_file(RECORDS_FILE_NAME)
+		fileinfo, _ := file.Stat()
+		size := fileinfo.Size()
+		file.Close()
+		return int32(size)
+	}
+}
+
+func update_record(address int32) {
+	updated_record := read_record_from_file(address)
+	fmt.Println("Pass value for mass")
+	fmt.Scanf("%d", &updated_record.mass)
+	fmt.Println("Pass value for heat")
+	fmt.Scanf("%d", &updated_record.heat)
+	fmt.Println("Pass value for delta temperature")
+	fmt.Scanf("%d", &updated_record.temp_delta)
+	write_record_to_file(updated_record, address)
 
 }

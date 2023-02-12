@@ -7,12 +7,18 @@ const (
 	SINGLE_TREE_RECORD_SIZE = 12
 	INT_SIZE                = 4
 	MAX_KEYS                = 2 * TREE_DEGREE
+	MAX_CHILDREN            = 2*TREE_DEGREE + 1
 	TREE_PAGE_SIZE          = HEADER_SIZE + MAX_KEYS*SINGLE_TREE_RECORD_SIZE + INT_SIZE
 	TREE_FILE_NAME          = "bin/tree.bin"
 	RECORDS_FILE_NAME       = "bin/records.bin"
 	NO_CHILD                = -3
 	NO_PARENT               = -4
 	NO_ROOT                 = -5
+	CHARS_FOR_NODE          = 3*MAX_KEYS + 1*MAX_CHILDREN
+	SPACE_PADDING           = 1
+	TREE_GRAPH_FILE         = "bin/graph.txt"
+	COMMANDS_FILE           = "bin/commands.txt"
+	DELETED                 = -6
 )
 
 type record struct {
@@ -41,3 +47,7 @@ type tree_page struct {
 }
 
 var root_address int32
+var tree_height int
+var free_list_records []int32
+var free_list_pages []int32
+var subtree_height int

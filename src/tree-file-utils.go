@@ -33,12 +33,17 @@ func remove_file(name string) {
 }
 
 func get_offset_for_new_node() int32 {
-	file := get_file(TREE_FILE_NAME)
-	fileinfo, _ := file.Stat()
-	size := fileinfo.Size()
-	file.Close()
-	return int32(size)
-
+	if len(free_list_pages) > 0 {
+		addr := free_list_pages[len(free_list_pages)-1]
+		free_list_pages = free_list_pages[:len(free_list_pages)-1]
+		return addr
+	} else {
+		file := get_file(TREE_FILE_NAME)
+		fileinfo, _ := file.Stat()
+		size := fileinfo.Size()
+		file.Close()
+		return int32(size)
+	}
 }
 
 func write_page_to_file(page tree_page) {
@@ -77,7 +82,6 @@ func write_page_to_file(page tree_page) {
 		}
 	}
 	file.Close()
-	fmt.Println("Page saved")
 }
 
 func read_page_from_file(offset int32) tree_page {
